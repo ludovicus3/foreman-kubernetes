@@ -12,9 +12,9 @@ on:
     inputs:
       POSTGRESQL_VERSION:
         description: 'Version of postgresql to use as base image'
-        default: 13
+        default: '13'
         required: true
-        type: number
+        type: string
     secrets:
       QUAY_USERNAME:
         required: true
@@ -64,7 +64,7 @@ jobs:
           provenance: false
           context: containers/postgresql
           build-args: |
-            POSTGRESQL_VERSION=${{ inputs.POSTGRESQL_VERSION }}
+            POSTGRESQL_VERSION="${{ inputs.POSTGRESQL_VERSION }}"
           tags: |
             quay.io/ludovicus/foreman:postgres-latest
             ${{ steps.meta.outputs.tags }}
