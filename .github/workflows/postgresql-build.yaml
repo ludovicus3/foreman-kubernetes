@@ -9,12 +9,6 @@ on:
 
   workflow_call:
     # Map the workflow outputs to job outputs
-    inputs:
-      POSTGRESQL_VERSION:
-        description: 'Version of postgresql to use as base image'
-        default: '13'
-        required: true
-        type: string
     secrets:
       QUAY_USERNAME:
         required: true
@@ -25,6 +19,8 @@ on:
         description: "The first output string"
         value: ${{ jobs.build_postgresql_image.outputs.output1 }}
 
+env:
+  POSTGRESQL_VERSION: '13'
 
 jobs:
   build_postgres_image:
@@ -44,9 +40,9 @@ jobs:
           flavor: |
             latest=true
             prefix=postgres-,onlatest=true
-            prefix=postgres${{ github.event.inputs.POSTGRESQL_VERSION }}-,onlatest=true
+            prefix=postgres${{ env.POSTGRESQL_VERSION }}-,onlatest=true
           tags: |
-            type=sha,prefix=postgres${{ github.event.inputs.POSTGRESQL_VERSION }}-,format=short
+            type=sha,prefix=postgres${{ env.POSTGRESQL_VERSION }}-,format=short
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -64,7 +60,7 @@ jobs:
           provenance: false
           context: containers/postgresql
           build-args: |
-            POSTGRESQL_VERSION=${{ github.event.inputs.POSTGRESQL_VERSION }}
+            POSTGRESQL_VERSION=${{ env.POSTGRESQL_VERSION }}
           tags: |
             quay.io/ludovicus/foreman:postgres-latest
             ${{ steps.meta.outputs.tags }}
