@@ -13,7 +13,7 @@ on:
       POSTGRESQL_VERSION:
         description: 'Version of postgresql to use as base image'
         default: 13
-        required: false
+        required: true
         type: number
     secrets:
       QUAY_USERNAME:
