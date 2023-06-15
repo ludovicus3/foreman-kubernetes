@@ -1,4 +1,4 @@
-name: Build of Debian Bullseye based Developer Images
+name: Build of Postgresql for Foreman/Katello
 
 on:
   schedule:
@@ -44,9 +44,9 @@ jobs:
           flavor: |
             latest=true
             prefix=postgres-,onlatest=true
-            prefix=postgres${{ inputs.POSTGRESQL_VERSION }}-,onlatest=true
+            prefix=postgres${{ github.event.inputs.POSTGRESQL_VERSION }}-,onlatest=true
           tags: |
-            type=sha,prefix=postgres${{ inputs.POSTGRESQL_VERSION }}-,format=short
+            type=sha,prefix=postgres${{ github.event.inputs.POSTGRESQL_VERSION }}-,format=short
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -64,7 +64,7 @@ jobs:
           provenance: false
           context: containers/postgresql
           build-args: |
-            POSTGRESQL_VERSION="${{ inputs.POSTGRESQL_VERSION }}"
+            POSTGRESQL_VERSION=${{ github.event.inputs.POSTGRESQL_VERSION }}
           tags: |
             quay.io/ludovicus/foreman:postgres-latest
             ${{ steps.meta.outputs.tags }}
