@@ -1,0 +1,60 @@
+name: Build of Katello-Certs-Tools for Foreman/Katello
+
+on:
+  schedule:
+    - cron: '15 23 * * 1'
+  push:
+    branches: 
+      - katello-certs-tools
+
+  workflow_call:
+    # Map the workflow outputs to job outputs
+    secrets:
+      QUAY_USERNAME:
+        required: true
+      QUAY_PASSWORD:
+        required: true
+    outputs:
+      uniq_tag:
+        description: "The first output string"
+        value: ${{ jobs.build_katello_certs_tools_image.outputs.output1 }}
+
+jobs:
+  build_katello_certs_tools_image:
+    name: Build and publish Katello Certs Tools to Quay.io
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            quay.io/ludovicus/foreman
+          flavor: |
+            latest=true
+            prefix=katello-certs-tools-,onlatest=true
+          tags: |
+            type=sha,prefix=katello-certs-tools-,format=short
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to Quay.io
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+      - name: Docker Build & Push Base
+        uses: docker/build-push-action@v4
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          provenance: false
+          context: containers/certs-tools
+          tags: |
+            quay.io/ludovicus/foreman:katello-certs-tools-latest
+            ${{ steps.meta.outputs.tags }}

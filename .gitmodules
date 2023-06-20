@@ -1,3 +1,6 @@
 [submodule "containers/postgresql/postgresql-evr"]
 	path = containers/postgresql/postgresql-evr
 	url = https://github.com/Katello/postgresql-evr.git
+[submodule "containers/certs-tools/katello-certs-tools"]
+	path = containers/certs-tools/katello-certs-tools
+	url = https://github.com/Katello/katello-certs-tools.git
