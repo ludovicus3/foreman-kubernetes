@@ -1,6 +1,8 @@
 FROM alpine:latest
 
-RUN apk add --update --no-cache openssl openjdk11-jre-headless python3 py3-setuptools curl
+RUN apk add --update --no-cache openssl openjdk11-jre-headless python3 py3-setuptools py3-pip curl
+
+RUN pip3 install --no-cache rpm
 
 WORKDIR /build
 
